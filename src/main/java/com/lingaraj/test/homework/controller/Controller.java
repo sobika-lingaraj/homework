@@ -46,6 +46,8 @@ public class Controller {
             return ResponseEntity.badRequest().body(response);
         }
 
+        // regular expresion validation here pending.
+
         if (userRepository.findFirstByUserId(request.getUserId()).isPresent()) {
             response.setMessage("Account creation failed");
             response.setCause("already same user_id is used");
@@ -70,13 +72,6 @@ public class Controller {
         String[] authPair = getUserIdFromHeader(authorization);
         GetUserResponse response = new GetUserResponse();
 
-        Optional<User> userOptional = userRepository.findFirstByUserId(id);
-
-        if (userOptional.isEmpty()) {
-            response.setMessage("No User found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-
         if (authPair == null) {
             response.setMessage("Authentication Failed");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
@@ -86,7 +81,14 @@ public class Controller {
         //if (userOptionalAuth.isEmpty()) {
         //    response.setMessage("Authentication Failed");
         //    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        //}        
+        //}
+
+        Optional<User> userOptional = userRepository.findFirstByUserId(id);
+
+        if (userOptional.isEmpty()) {
+            response.setMessage("No User found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
 
         response.setMessage("User details by user_id");
         response.setUser(new UserDto());
