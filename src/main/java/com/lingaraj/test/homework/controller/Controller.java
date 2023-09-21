@@ -77,11 +77,11 @@ public class Controller {
 
         System.out.println(authPair[0]);
         System.out.println(userRepository.findAll().size());
-        Optional<User> userOptionalAuth = userRepository.findFirstByUserId(authPair[0]);
-        if (userOptionalAuth.isEmpty()) {
-            response.setMessage("Authentication Failed");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
+        //Optional<User> userOptionalAuth = userRepository.findFirstByUserId(authPair[0]);
+        //if (userOptionalAuth.isEmpty()) {
+        //    response.setMessage("Authentication Failed");
+        //    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        //}
 
         Optional<User> userOptional = userRepository.findFirstByUserId(id);
 
@@ -188,7 +188,6 @@ public class Controller {
             return null;
         }
 
-        System.out.println(authorization.substring(6));
         try {
             byte[] decodedAuthBytes = Base64.getDecoder().decode(authorization.substring(6));
             String decodedAuth = new String(decodedAuthBytes);
