@@ -36,7 +36,7 @@ public class Controller {
         
         if (request.getUserId() == null || request.getPassword() == null) {
             response.setMessage("Account creation failed");
-            response.setCause("Cannot create an account without user_id and password");
+            response.setCause("required user_id and password");
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -75,6 +75,8 @@ public class Controller {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
+        System.out.println(authPair[0]);
+        System.out.println(userRepository.findAll().size());
         Optional<User> userOptionalAuth = userRepository.findFirstByUserId(authPair[0]);
         if (userOptionalAuth.isEmpty()) {
             response.setMessage("Authentication Failed");
