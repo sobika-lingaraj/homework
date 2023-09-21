@@ -76,6 +76,8 @@ public class Controller {
         }
 
         System.out.println(authPair[0]);
+        System.out.println(id);
+        System.out.println(userRepository.findFirstByUserId(id));
         System.out.println(userRepository.findAll().size());
         //Optional<User> userOptionalAuth = userRepository.findFirstByUserId(authPair[0]);
         //if (userOptionalAuth.isEmpty()) {
@@ -111,10 +113,15 @@ public class Controller {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
-        Optional<User> userOptionalAuth = userRepository.findFirstByUserId(authPair[0]);
-        if (userOptionalAuth.isEmpty()) {
-            response.setMessage("Authentication Failed");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        //Optional<User> userOptionalAuth = userRepository.findFirstByUserId(authPair[0]);
+        //if (userOptionalAuth.isEmpty()) {
+        //    response.setMessage("Authentication Failed");
+        //    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        //}
+
+        if (!id.equals(authPair[0])) {
+            response.setMessage("No Permission for Update");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
 
         if (request.getNickname() == null && request.getComment() == null) {
@@ -130,15 +137,9 @@ public class Controller {
         }
 
         Optional<User> userOptional = userRepository.findFirstByUserId(id);
-
         if (userOptional.isEmpty()) {
             response.setMessage("No User found");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-
-        if (!userOptional.get().getUserId().equals(userOptionalAuth.get().getUserId())) {
-            response.setMessage("No Permission for Update");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
 
         if (request.getNickname() != null) {
