@@ -33,7 +33,18 @@ public class Controller {
     @PostMapping(path = "/signup")
     public ResponseEntity<SignUpResponse> signUp(@RequestBody SignUpRequest request) {
         SignUpResponse response = new SignUpResponse();
-        // request validation
+        
+        if (request.getUserId() == null || request.getPassword() == null) {
+            response.setMessage("Account creation failed");
+            response.setCause("Cannot create an account without user_id and password");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (request.getUserId().length() < 6 || request.getPassword().length() < 8) {
+            response.setMessage("Account creation failed");
+            response.setCause("Cannot create an account without user_id and password length");
+            return ResponseEntity.badRequest().body(response);
+        }
 
         if (userRepository.findFirstByUserId(request.getUserId()).isPresent()) {
             response.setMessage("Account creation failed");
@@ -64,7 +75,7 @@ public class Controller {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
-        Optional<User> userOptionalAuth = userRepository.findFirstByUserIdAndPassword(authPair[0], authPair[1]);
+        Optional<User> userOptionalAuth = userRepository.findFirstByUserId(authPair[0]);
         if (userOptionalAuth.isEmpty()) {
             response.setMessage("Authentication Failed");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
@@ -98,7 +109,7 @@ public class Controller {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
-        Optional<User> userOptionalAuth = userRepository.findFirstByUserIdAndPassword(authPair[0], authPair[1]);
+        Optional<User> userOptionalAuth = userRepository.findFirstByUserId(authPair[0]);
         if (userOptionalAuth.isEmpty()) {
             response.setMessage("Authentication Failed");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
@@ -155,7 +166,7 @@ public class Controller {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
-        Optional<User> userOptional = userRepository.findFirstByUserIdAndPassword(authPair[0], authPair[1]);
+        Optional<User> userOptional = userRepository.findFirstByUserId(authPair[0]);
         if (userOptional.isEmpty()) {
             response.setMessage("Authentication Failed");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
